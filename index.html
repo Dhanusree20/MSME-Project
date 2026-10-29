@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maligai Manager - Wholesaler & Sales System</title>
+    <!-- Google Fonts: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Authentication Page -->
+    <div id="auth-container" class="auth-container-fullscreen">
+        <div class="auth-box">
+            <h2>Welcome to Maligai Manager</h2>
+            <div class="auth-tabs">
+                <button id="auth-login-tab-btn" class="active">Login</button>
+                <button id="auth-signup-tab-btn">Sign Up</button>
+            </div>
+            
+            <form id="login-form">
+                <input type="text" id="login-username" placeholder="Username" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <div id="login-error-msg" class="error-msg"></div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            
+            <form id="signup-form" style="display: none;">
+                <input type="text" id="signup-username" placeholder="Username" required>
+                <input type="password" id="signup-password" placeholder="Password" required>
+                <input type="text" id="signup-phone" placeholder="Mobile Number" required>
+                <select id="signup-role">
+                    <option value="shopkeeper">Shopkeeper</option>
+                    <option value="wholesaler">Wholesaler</option>
+                </select>
+                <div id="signup-error-msg" class="error-msg"></div>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Top Header -->
+    <header class="app-header">
+        <div class="header-logo">
+            <span class="logo-icon">🏪</span>
+            <div class="logo-text">
+                <h1 id="header_title">Maligai Manager</h1>
+                <p id="header_subtitle">Smart Shop Assistant</p>
+            </div>
+        </div>
+        
+        <!-- Quick Cart Indicator -->
+        <div class="header-cart-badge" id="header-cart-badge">
+            <span class="badge-icon">🛒</span>
+            <span class="badge-count" id="cart-count">0</span>
+        </div>
+        
+        <!-- Logged-in user badge (Dynamic) -->
+        <div class="user-profile-badge" id="user-profile-badge" style="display: none;">
+            <span class="user-badge-text">Logged in as: <strong id="logged-username"></strong> (📱 <span id="logged-phone"></span>)</span>
+            <button class="btn btn-secondary btn-sm" id="logout-btn" style="margin-left: 6px;">Logout 🚪</button>
+        </div>
+
+        <!-- Language Selector Toggle -->
+        <div class="lang-toggle-container">
+            <span class="lang-label" id="lang-label-en">English</span>
+            <label class="switch">
+                <input type="checkbox" id="lang-toggle-checkbox">
+                <span class="slider round"></span>
+            </label>
+            <span class="lang-label" id="lang-label-ta">தமிழ்</span>
+        </div>
+
+        <!-- Theme Selector Toggle -->
+        <div class="theme-toggle-container">
+            <span class="theme-label" id="theme_light">☀️ Light</span>
+            <label class="switch">
+                <input type="checkbox" id="theme-toggle-checkbox" checked>
+                <span class="slider round"></span>
+            </label>
+            <span class="theme-label" id="theme_dark">🌙 Dark</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-container">
+        
+        <!-- 0. DASHBOARD SECTION -->
+        <section id="tab-dashboard" class="tab-content active">
+            <div class="dashboard-layout">
+                <!-- Left: Billing Section Summary -->
+                <div class="glass-panel dashboard-card billing-summary-card">
+                    <div class="panel-header">
+                        <h2 id="dash_billing_title">Billing & Sales Summary</h2>
+                        <span class="badge-icon">🛒</span>
+                    </div>
+                    <div class="dashboard-stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-label" id="dash_today_revenue_label">Today's Revenue</span>
+                            <span class="stat-value">₹<strong id="dash-today-revenue">0</strong></span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label" id="dash_total_bills_label">Total Bills</span>
+                            <span class="stat-value" id="dash-today-bills-count">0</span>
+                        </div>
+                    </div>
+                    <div class="recent-sales-list">
+                        <h3 class="subsection-title" id="dash_recent_sales_title">Recent Sales</h3>
+                        <div class="recent-sales-container" id="dash-recent-sales-container">
+                            <!-- Injected by app.js -->
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="dash-go-billing-btn">
+                        Go to Billing Tab ➔
+                    </button>
+                </div>
+
+                <!-- Right: Stock Section Summary -->
+                <div class="glass-panel dashboard-card stock-summary-card">
+                    <div class="panel-header">
+                        <h2 id="dash_stock_title">Stock & Inventory</h2>
+                        <span class="badge-icon">📦</span>
+                    </div>
+                    <div class="dashboard-stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-label" id="dash_total_items_label">Total Items</span>
+                            <span class="stat-value" id="dash-total-items-count">0</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label" id="dash_low_stock_label">Low Stock Warning</span>
+                            <span class="stat-value" id="dash-low-stock-count">0</span>
+                        </div>
+                    </div>
+                    <div class="critical-stock-list">
+                        <h3 class="subsection-title" id="dash_critical_items_title">Critical Reorder Items</h3>
+                        <div class="critical-items-container" id="dash-critical-items-container">
+                            <!-- Injected by app.js -->
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary btn-block" id="dash-go-stock-btn">
+                        Go to Stock Status ➔
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 1. BILLING SECTION -->
+        <section id="tab-billing" class="tab-content">
+            <div class="billing-layout">
+                <!-- Cart Summary Header -->
+                <div class="glass-panel cart-summary-panel">
+                    <div class="panel-header">
+                        <h2 id="cart_title">Active Bill</h2>
+                        <button class="btn btn-secondary btn-sm" id="clear-cart-btn">Clear</button>
+                    </div>
+                    <div class="cart-items" id="cart-items-list">
+                        <div class="empty-cart-message" id="empty_cart_msg">No items added to bill yet. Click on products below!</div>
+                    </div>
+                    <div class="cart-totals">
+                        <div class="total-row">
+                            <span id="total_items">Total Items:</span>
+                            <strong id="total-qty">0</strong>
+                        </div>
+                        <div class="total-row grand-total">
+                            <span id="total_amount">Total Amount:</span>
+                            <span>₹<strong id="total-price">0</strong></span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-large btn-block" id="confirm-bill-btn">
+                        CONFIRM BILL ➔
+                    </button>
+                </div>
+
+                <!-- Shelf Container wrapping title and grid together for correct 2-column layout -->
+                <div class="shelf-container">
+                    <!-- Shelf Title -->
+                    <div class="shelf-header">
+                        <h3 id="shelf_title">Product Shelf</h3>
+                        <span class="shelf-instruction" id="shelf_instruction">Tap photo to add to bill</span>
+                    </div>
+
+                    <!-- Product Grid -->
+                    <div class="product-grid" id="product-grid-container">
+                        <!-- Dynamic product cards will be injected here by app.js -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. INVENTORY SECTION -->
+        <section id="tab-inventory" class="tab-content">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <h2 id="inventory_title">Store Stock</h2>
+                </div>
+
+                <div class="table-container">
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px; text-align: center;" id="tbl_select">Select</th>
+                                <th id="tbl_product">Product</th>
+                                <th id="tbl_stock">Current Stock</th>
+                                <th id="tbl_price">Selling Price</th>
+                                <th id="tbl_status">Status</th>
+                                <th id="tbl_action">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body">
+                            <!-- Dynamic inventory rows injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. PREDICTIONS SECTION -->
+        <section id="tab-prediction" class="tab-content">
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <h2 id="predictions_title">AI Demand 6-Month Projection</h2>
+                </div>
+                <p class="panel-desc" id="predictions_desc">Based on inventory levels and current stock movement, our AI calculates 6-month predictive trends for reordering.</p>
+                
+                <div class="predictions-list" id="predictions-list-container" style="display: flex; gap: 16px; margin-top: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+                    <!-- Dynamic predictions cards injected here -->
+                </div>
+                
+                <!-- Forecast Chart Module -->
+                <div id="forecast-chart-container" style="margin-top: 24px; min-height: 400px; width: 100%;"></div>
+            </div>
+        </section>
+
+        <!-- 4. CHATBOT SECTION -->
+        <section id="tab-chatbot" class="tab-content">
+            <div class="chatbot-container glass-panel">
+                <div class="chatbot-header">
+                    <div class="chatbot-avatar">🤖</div>
+                    <div class="chatbot-details">
+                        <h2 id="bot_name">Udhavi Thambi</h2>
+                        <p class="online-badge"><span class="pulse-dot"></span> <span id="bot_status">Online Shop Assistant</span></p>
+                    </div>
+                </div>
+
+                <!-- Chat Log -->
+                <div class="chat-log" id="chat-log-container">
+                    <!-- Dynamic messages -->
+                </div>
+
+                <!-- Conversational Quick Action Tags -->
+                <div class="chat-suggestions-container">
+                    <span class="suggestion-title" id="bot_suggestions">Quick Questions:</span>
+                    <div class="chat-suggestions" id="chat-suggestions-list">
+                        <!-- Dynamic buttons based on language toggle -->
+                    </div>
+                </div>
+
+                <!-- Speech Controls & Text Input -->
+                <div class="chat-input-area">
+                    <button class="btn btn-audio-mic" id="voice-input-btn" title="Speak to chatbot">
+                        🎤 <span class="mic-label" id="btn_speak">Speak</span>
+                    </button>
+                    <input type="text" class="chat-text-input" id="chat-text-input" placeholder="Type message here...">
+                    <button class="btn btn-primary btn-chat-send" id="chat-send-btn" id="btn_send">Send</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. WHOLESALER SECTION -->
+        <section id="tab-wholesaler" class="tab-content">
+            <div class="wholesaler-layout">
+                <!-- Wholesaler Details Card -->
+                <div class="glass-panel wholesaler-card">
+                    <div class="panel-header">
+                        <h2 id="wholesaler_title">Wholesaler Portal</h2>
+                    </div>
+                    <div class="wholesaler-selector-wrapper" style="display: flex; gap: 10px; align-items: flex-end; margin-bottom: 16px;">
+                        <div style="flex: 1;">
+                            <label for="wholesaler-select" class="form-label" id="select_wholesaler">Select Supplier:</label>
+                            <select id="wholesaler-select" class="form-select" style="width: 100%;">
+                                <!-- Dynamic options -->
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" id="btn-add-supplier-trigger" onclick="openAddSupplierModal()" style="height: 44px; padding: 0 16px; font-weight: 700; white-space: nowrap; border-radius: var(--radius-sm);">
+                            ➕ Add Supplier
+                        </button>
+                    </div>
+                    <div class="supplier-contact-info" id="supplier-contact-info">
+                        <!-- Dynamic Contact info -->
+                    </div>
+
+                <!-- Order Drafter Card -->
+                <div class="glass-panel order-drafter-card">
+                    <div class="panel-header">
+                        <h3 id="order_drafter_title">Auto-Generated Order</h3>
+                    </div>
+                    <textarea class="order-template-box" id="order-template-box" readonly></textarea>
+                    
+                    <div class="order-actions">
+                        <!-- Voice Message Simulation -->
+                        <div class="voice-memo-simulator" style="flex-direction: column; align-items: stretch; gap: 12px; padding: 12px; width: 100%;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                                <div style="display: flex; gap: 10px;">
+                                    <button class="btn btn-secondary btn-audio-record" id="voice-record-btn" type="button" style="padding: 10px 16px;">
+                                        🎙️ <span id="record_voice">Record Voice Order</span>
+                                    </button>
+                                    <button class="btn btn-danger" id="voice-stop-btn" type="button" disabled style="padding: 10px 16px; border-radius: var(--radius-lg); font-size: 13px; font-weight: 700; display: none;">
+                                        🛑 Stop
+                                    </button>
+                                </div>
+                                <span class="recording-timer" id="recording-timer">00:00</span>
+                            </div>
+                            <!-- Audio Preview Controls -->
+                            <div id="voice-preview-container" style="display: none; align-items: center; justify-content: space-between; width: 100%; border-top: 1px solid var(--border-glass); padding-top: 10px; margin-top: 4px;">
+                                <span style="font-size: 12px; color: var(--text-secondary); font-weight: 600;" id="lbl_voice_preview">Audio Preview:</span>
+                                <audio id="voice-preview-player" controls style="height: 32px; max-width: 220px;"></audio>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-direction: column;">
+                            <button class="btn btn-success btn-large" id="btn-order-whatsapp">
+                                Order via WhatsApp
+                            </button>
+                            <button class="btn btn-secondary btn-large" id="btn-order-sms">
+                                Order via SMS
+                            </button>
+                        </div>
+                        <button class="btn btn-primary btn-large" id="place-wholesale-order-btn" style="margin-top: 4px;">
+                            Place Wholesale Order (In-App) 📦
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Simulation Dispatch Log -->
+                <div class="glass-panel simulation-log-card">
+                    <div class="panel-header">
+                        <h3 id="sim_logs_title">Communication Activity Log</h3>
+                    </div>
+                    <div class="simulation-logs" id="simulation-logs-container">
+                        <div class="log-entry system" id="no_activity">No recent messages sent.</div>
+                    </div>
+                </div>
+
+                <!-- Supplier Proactive Suggestions Card -->
+                <div class="glass-panel simulation-log-card" id="supplier-suggestions-card" style="margin-bottom: 20px;">
+                    <div class="panel-header">
+                        <h3 id="supplier_suggestions_title">💡 Proactive Replenishment Suggestions</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th id="tbl_suggest_by_supplier">Supplier</th>
+                                    <th id="tbl_suggest_prod">Suggested Product</th>
+                                    <th id="tbl_suggest_amount">Quantity</th>
+                                    <th id="tbl_suggest_op">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="supplier-suggestions-table-body">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted);" id="no_active_suggestions">No suggestions from suppliers.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Wholesale Orders Card -->
+                <div class="glass-panel simulation-log-card" id="wholesale-orders-card">
+                    <div class="panel-header">
+                        <h3 id="recent_wholesale_orders_title">Recent Wholesale Orders</h3>
+                    </div>
+                    <div class="table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th id="tbl_order_id">Order ID</th>
+                                    <th id="tbl_order_item">Item Name</th>
+                                    <th id="tbl_order_qty">Quantity</th>
+                                    <th id="tbl_wholesaler">Supplier</th>
+                                    <th id="tbl_date">Order Date</th>
+                                    <th id="tbl_order_status">Status</th>
+                                    <th id="tbl_order_action">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wholesale-orders-table-body">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: var(--text-muted);" id="no_wholesale_orders">No recent wholesale orders found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. WHOLESALER DASHBOARD SECTION -->
+        <section id="tab-wholesaler-dashboard" class="tab-content">
+            <div class="glass-panel">
+                <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 id="wholesaler_dash_title">Wholesaler Fulfillment Portal</h2>
+                    <span class="status-pill status-good" style="font-weight: 700;">🟢 Online Fulfillment</span>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);" id="incoming_orders_title">Incoming Wholesale Orders</h3>
+                    <div class="table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Order Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wholesaler-incoming-orders-body">
+                                <!-- Dynamic incoming orders loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Proactive Suggestions Panel -->
+                <div style="margin-top: 30px; border-top: 1px solid var(--border-glass); padding-top: 20px;">
+                    <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 4px; color: var(--text-primary);" id="proactive_suggestions_title">💡 Proactive Stock Replenishment Suggestions</h3>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;" id="proactive_suggestions_desc">Select shopkeeper low-stock items below to propose order replenishment suggestions directly.</p>
+                    <div class="table-container">
+                        <table class="inventory-table">
+                            <thead>
+                                <tr>
+                                    <th id="tbl_suggest_item">Product</th>
+                                    <th id="tbl_suggest_current">Current Stock / Min</th>
+                                    <th id="tbl_suggest_qty">Propose Quantity</th>
+                                    <th id="tbl_suggest_action">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wholesaler-proactive-suggestions-body">
+                                <!-- Dynamic suggestions loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="app-nav">
+        <button class="nav-tab active" data-target="tab-dashboard">
+            <span class="tab-icon">📊</span>
+            <span class="tab-label" id="nav_dashboard">Dashboard</span>
+        </button>
+        <button class="nav-tab" data-target="tab-billing">
+            <span class="tab-icon">🛒</span>
+            <span class="tab-label" id="nav_billing">Billing</span>
+        </button>
+        <button class="nav-tab" data-target="tab-inventory">
+            <span class="tab-icon">📦</span>
+            <span class="tab-label" id="nav_inventory">Stock Status</span>
+        </button>
+        <button class="nav-tab" data-target="tab-prediction">
+            <span class="tab-icon">📈</span>
+            <span class="tab-label" id="nav_prediction">Predictions</span>
+        </button>
+        <button class="nav-tab" data-target="tab-chatbot">
+            <span class="tab-icon">🤖</span>
+            <span class="tab-label" id="nav_chatbot">Chatbot</span>
+        </button>
+        <button class="nav-tab" onclick="openNotificationsModal()">
+            <span class="tab-icon">🔔</span>
+            <span class="tab-label" id="nav_notifications">Notifications</span>
+        </button>
+        <button class="nav-tab" data-target="tab-wholesaler">
+            <span class="tab-icon">🚚</span>
+            <span class="tab-label" id="nav_wholesaler">Wholesaler</span>
+        </button>
+        <button class="nav-tab" data-target="tab-wholesaler-dashboard" style="display: none;">
+            <span class="tab-icon">💼</span>
+            <span class="tab-label" id="nav_wholesaler_dash">Supplier Portal</span>
+        </button>
+    </nav>
+
+    <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;"></div>
+
+    <!-- React & Recharts dependencies -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
